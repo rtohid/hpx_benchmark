@@ -12,7 +12,7 @@
 int run_std()
 {
     constexpr int num_runs{10};
-    size_t input_size{static_cast<size_t>(std::pow(2, 24))};
+    size_t input_size{static_cast<size_t>(std::pow(2, 26))};
     std::vector<double> input(input_size);
 
     std_count_t std_count;
@@ -99,4 +99,6 @@ int main()
 {
     run_std();
     hpx::init();
+    csv_log_t csv_file{};
+    csv_file.write_to_file("results");
 }

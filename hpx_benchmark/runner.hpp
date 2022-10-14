@@ -4,6 +4,36 @@
 #include <iostream>
 #include <string>
 
+struct csv_log_t
+{
+    static std::string run_log;
+
+    csv_log_t()
+    {
+        if (run_log.empty())
+        {
+            run_log = "kernel, input_size, averag_time, min_time, max_time\n";
+        }
+    }
+
+    void add_log(std::string kernel_name, size_t input_size,
+        double average_time, double min_time, double max_time)
+    {
+        run_log += kernel_name + ", " + std::to_string(input_size) + ", " +
+            std::to_string(average_time) + ", " + std::to_string(min_time) +
+            ", " + std::to_string(max_time) + "\n";
+    }
+
+    void write_to_file(std::string name = "csv_log")
+    {
+        std::ofstream csv_file(name + ".csv");
+        csv_file << run_log;
+    }
+
+    std::string name;
+};
+
+std::string csv_log_t::run_log{};
 class Runner
 {
 public:
@@ -20,9 +50,7 @@ public:
         double current_time = 0;
         std::chrono::duration<double> execution_time;
 
-        std::ofstream csv_file(kernel_name + ".csv");
-
-        csv_file << "kernel, input_size, averag_time, min_time, max_time\n";
+        csv_log_t csv_log;
 
         std::cout << "START RUNNING <<<" << kernel_name << ">>>" << std::endl;
         for (size_t i = 0; i < num_runs; i++)
@@ -48,9 +76,8 @@ public:
 
         average_exe_time /= num_runs;
 
-        csv_file << kernel_name << ", " << input_size << ", "
-                 << average_exe_time << ", " << min_time << ", " << max_time
-                 << std::endl;
+        csv_log.add_log(
+            kernel_name, input_size, average_exe_time, min_time, max_time);
 
         std::cout << kernel_name << " took " << average_exe_time
                   << " on average" << std::endl;
